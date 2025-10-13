@@ -1,0 +1,50 @@
+<div class="auth-container">
+
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!showQuestions()">
+    <div class="form">
+      <h1>🔐 Login </h1>
+      <div class="form-group">
+      <label>Correo electrónico</label>
+      <input type="email" formControlName="email" placeholder=" " />
+      </div>
+
+      <div class="form-group">
+      <input type="text" formControlName="token" maxlength="6" placeholder=" " />
+      <label>Token MFA</label>
+      </div>
+
+      <button type="submit" [disabled]="isLoading()">
+      {{ isLoading() ? 'Validando...' : 'Validar token' }}
+      </button>
+    </div>
+  </form>
+
+  <form
+    [formGroup]="questionsGroup" class="form"
+    (ngSubmit)="onQuestionsSubmit()"
+    *ngIf="showQuestions()"
+  >
+    <div class="form-group">
+    <h1>🔒 Preguntas de seguridad</h1>
+    <div>
+      <label>¿En que año se fundó Nuvant?</label>
+      <input type="text" formControlName="answer1" />
+    </div>
+
+    <div>
+      <label >¿Cual es tu cargo?</label>
+      <input type="text" formControlName="answer2" />
+    </div>
+
+    <div>
+      <label >¿Cual es tu cedula?</label>
+      <input type="text" formControlName="answer3" />
+    </div>
+    <br>
+    <button type="submit" [disabled]="isLoading()">
+      {{ isLoading() ? 'Verificando...' : 'Enviar respuestas' }}
+    </button>
+  </div>
+  </form>
+</div>
