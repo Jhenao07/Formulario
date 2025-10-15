@@ -19,11 +19,15 @@ export class AuthFormComponent {
   showQuestions = signal(false);
   isLoading = signal(false);
 
+  showModal = signal(false);
+  modalMessage = signal('');
+  modalType = signal<'success' | 'error' | 'warning'>('warning');
+
   constructor(private router: Router, private auth: AuthService) {}
 
   form: FormGroup = this.fb.group({
     email: this.fb.control('', [Validators.required, Validators.email]),
-    token: this.fb.control('', [Validators.required, Validators.pattern(/^\d{6}$/)]),
+    token: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]+$/)]),
     questions: this.fb.group({
       answer1: this.fb.control('', [Validators.required]),
       answer2: this.fb.control('', [Validators.required]),
@@ -31,25 +35,50 @@ export class AuthFormComponent {
     }),
   });
 
+
+
+
+    openModal(message: string): void {
+    this.modalMessage.set(message);
+    this.showModal.set(true);
+  }
+
+  closeModal(): void {
+    const type = this.modalType()
+    this.showModal.set(false);
+     if (type === 'error' || type === 'warning') {
+    }
+
+  }
+
+
   onSubmit(): void {
+
+
+
     this.isLoading.set(true);
+
     const email = this.form.get('email')?.value ?? '';
     const token = this.form.get('token')?.value ?? '';
+
 
     this.auth.validateToken(email, token).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         if (res.success) {
-          alert('✅ Token correcto. Acceso permitido.');
+          this.openModal('✅ Token correcto. Acceso permitido.');
+          setTimeout(()=>{
+          this.closeModal
           this.router.navigate(['/dashboard']);
-        } else {
-          alert('❌ Token incorrecto. Responde las preguntas.');
+        },1200)
+        }else {
+          this.openModal('❌ Token incorrecto. Responde las preguntas.');
           this.showQuestions.set(true);
         }
       },
       error: () => {
         this.isLoading.set(false);
-        alert('⚠️ Error al validar el token.');
+        this.openModal('⚠️ Error al validar el token.');
       },
     });
   }
@@ -59,24 +88,28 @@ export class AuthFormComponent {
     const answers = this.form.get('questions')?.value as IQuestionAnswers;
 
     if (!answers.answer1 || !answers.answer2 || !answers.answer3) {
-      alert('❌ Debes responder todas las preguntas.');
+      this.openModal('❌ Debes responder todas las preguntas.');
       return;
     }
 
     this.isLoading.set(true);
+
     this.auth.validateQuestions(email, answers).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         if (res.success) {
-          alert('✅ Respuestas correctas. Bienvenido.');
+          this.openModal('✅ Respuestas correctas. Bienvenido.');
+         setTimeout(() => {
+          this.closeModal
           this.router.navigate(['/dashboard']);
+        },1200)
         } else {
-          alert('❌ Alguna respuesta es incorrecta.');
+          this.openModal('❌ Alguna respuesta es incorrecta.');
         }
       },
       error: () => {
         this.isLoading.set(false);
-        alert('⚠️ Error al validar las respuestas.');
+        this.openModal('⚠️ Error al validar las respuestas.');
       },
     });
   }
