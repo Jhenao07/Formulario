@@ -12,11 +12,9 @@ export class DashboardComponent {
 constructor(private Router: Router) {}
 
   logout(): void {
-    // 1️⃣ Limpia cualquier información de sesión si la tienes
-    localStorage.clear(); // opcional si guardas tokens o correos
+    localStorage.clear();
     sessionStorage.clear();
 
-    // 2️⃣ Redirige al login
     this.Router.navigateByUrl('/', { skipLocationChange: true }).then(() => {
       this.Router.navigate(['/auth']);
     });

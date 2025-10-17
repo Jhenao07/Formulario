@@ -5,10 +5,12 @@ import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { IQuestionAnswers } from '../interfaces/interfaces';
+import { SwalComponent, SwalDirective } from '@sweetalert2/ngx-sweetalert2';
+import Swal from 'sweetalert2';
+
 
 @Component({
   selector: 'app-auth-form',
-  standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './auth-form.html',
   styleUrls: ['./auth-form.component.css'],
@@ -36,8 +38,6 @@ export class AuthFormComponent {
   });
 
 
-
-
     openModal(message: string): void {
     this.modalMessage.set(message);
     this.showModal.set(true);
@@ -50,6 +50,8 @@ export class AuthFormComponent {
     }
 
   }
+
+
 
 
   onSubmit(): void {
@@ -66,20 +68,25 @@ export class AuthFormComponent {
       next: (res) => {
         this.isLoading.set(false);
         if (res.success) {
-          this.openModal('✅ Token correcto. Acceso permitido.');
-          setTimeout(()=>{
-          this.closeModal
-          this.router.navigate(['/dashboard']);
-        },1200)
+            Swal.fire({
+              icon: 'success',
+              title: '¡Bienvenido!',
+              text: 'Respuestas correctas.',
+              confirmButtonColor: '#d47100ff',})
+              .then(() => {
+              this.router.navigate(['/dashboard'])
+              })
         }else {
-          this.openModal('❌ Token incorrecto. Responde las preguntas.');
+          Swal.fire({
+            icon: 'error',
+            title: 'Token Incorrecto',
+            text: 'Responde las siguientes preguntas',
+            confirmButtonColor: '#d33',
+          });
           this.showQuestions.set(true);
         }
       },
-      error: () => {
-        this.isLoading.set(false);
-        this.openModal('⚠️ Error al validar el token.');
-      },
+
     });
   }
 
@@ -88,7 +95,12 @@ export class AuthFormComponent {
     const answers = this.form.get('questions')?.value as IQuestionAnswers;
 
     if (!answers.answer1 || !answers.answer2 || !answers.answer3) {
-      this.openModal('❌ Debes responder todas las preguntas.');
+       Swal.fire({
+            icon: 'error',
+            title: 'Respuestas incorrectas',
+            text: 'Alguna respuesta no coincide.',
+            confirmButtonColor: '#d33',
+          });
       return;
     }
 
@@ -98,18 +110,30 @@ export class AuthFormComponent {
       next: (res) => {
         this.isLoading.set(false);
         if (res.success) {
-          this.openModal('✅ Respuestas correctas. Bienvenido.');
-         setTimeout(() => {
-          this.closeModal
-          this.router.navigate(['/dashboard']);
-        },1200)
+          Swal.fire({
+              icon: 'success',
+              title: '¡Bienvenido!',
+              text: 'Respuestas correctas.',
+              confirmButtonColor: '#d47100ff',})
+              .then(() => {
+              this.router.navigate(['/dashboard'])
+          })
         } else {
-          this.openModal('❌ Alguna respuesta es incorrecta.');
+            Swal.fire({
+            icon: 'error',
+            title: 'Respuestas incorrectas',
+            text: 'Alguna respuesta no coincide.',
+            confirmButtonColor: '#d33',
+          });
         }
       },
       error: () => {
         this.isLoading.set(false);
-        this.openModal('⚠️ Error al validar las respuestas.');
+          Swal.fire({
+          title: "TOKEN",
+          text: '⚠️ Error al validar el token.',
+          icon: "question"
+        });
       },
     });
   }
