@@ -2,7 +2,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IQuestionAnswers } from '../interfaces/interfaces';
+import { IQuestion, IQuestionAnswers } from '../interfaces/interfaces';
+// import { IQuestionAnswers } from '../interfaces/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -10,11 +11,19 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
-  validateToken(email: string, token: string): Observable<{ success: boolean }> {
-    return this.http.post<{ success: boolean }>(`${this.apiUrl}/validate-token`, { email, token });
+
+  getQuestions(): Observable<IQuestion[]> {
+    return this.http.get<IQuestion[]>(`${this.apiUrl}/questions`);
   }
 
-  validateQuestions(email: string, answers: IQuestionAnswers): Observable<{ success: boolean }> {
+  validateToken(email: string, token: string): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.apiUrl}/validate-token`, {
+      email,
+      token,
+    });
+  }
+
+  validateQuestions(email: string, answers: Record<number, string>): Observable<{ success: boolean }> {
     return this.http.post<{ success: boolean }>(`${this.apiUrl}/validate-questions`, { email, answers });
   }
 }

@@ -5,7 +5,7 @@
     <div class="form">
       <h1>🔐 Login </h1>
       <div class="form-group">
-      <label>Correo electrónico</label>
+      <h1>Correo electrónico</h1>
       <div class="error"  *ngIf="form.get('email')?.invalid && form.get('email')?.touched" >
         El correo debe tener un formato válido (ej: usuario@dominio.com)
       </div>
@@ -13,8 +13,9 @@
       </div>
 
       <div class="form-group">
+        <h1>Token MFA</h1>
       <input type="text" formControlName="token" maxlength="6" placeholder=" " />
-      <label>Token MFA</label>
+
       <div class="error" *ngIf="form.get('token')?.invalid && form.get('token')?.touched">
       El token solo debe contener números
       </div>
@@ -26,37 +27,19 @@
     </div>
   </form>
 
-    <div class="modal-overlay" *ngIf="showModal()">
-      <div class="modal-box" [ngClass]="modalType()">
-        <p>{{ modalMessage() }}</p>
-        <button (click)="closeModal()">Cerrar</button>
+
+
+
+
+
+    <div class="form" *ngIf="showQuestions()" [formGroup]="questionsGroup">
+      <h3>Preguntas de seguridad</h3>
+
+      <div class="form-group" *ngFor="let q of questionList(); trackBy: trackById">
+        <label>{{ q.text }}</label>
+        <input [formControlName]="q.id" placeholder="Tu respuesta..." />
       </div>
-    </div>
-  <form
-    [formGroup]="questionsGroup" class="form"
-    (ngSubmit)="onQuestionsSubmit()"
-    *ngIf="showQuestions()"
-  >
-    <div class="form-group">
-    <h1>🔒 Preguntas de seguridad</h1>
-    <div>
-      <label>¿En que año se fundó Nuvant?</label>
-      <input type="text" formControlName="answer1" />
+      <button type="button" (click)="onQuestionsSubmit()">Enviar Respuestas</button>
     </div>
 
-    <div>
-      <label >¿Cual es tu cargo?</label>
-      <input type="text" formControlName="answer2" />
-    </div>
-
-    <div>
-      <label >¿Cual es tu cedula?</label>
-      <input type="text" formControlName="answer3" />
-    </div>
-    <br>
-    <button type="submit" [disabled]="isLoading()">
-      {{ isLoading() ? 'Verificando...' : 'Enviar respuestas' }}
-    </button>
-  </div>
-  </form>
 </div>

@@ -4,9 +4,9 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, NonNullableFor
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { IQuestionAnswers } from '../interfaces/interfaces';
-import { SwalComponent, SwalDirective } from '@sweetalert2/ngx-sweetalert2';
+// import { IQuestionAnswers } from '../interfaces/interfaces';
 import Swal from 'sweetalert2';
+import { IQuestion, IQuestionAnswers } from '../interfaces/interfaces';
 
 
 @Component({
@@ -16,129 +16,98 @@ import Swal from 'sweetalert2';
   styleUrls: ['./auth-form.component.css'],
 })
 export class AuthFormComponent {
-  private fb: NonNullableFormBuilder = new FormBuilder().nonNullable;
+  private fb = new FormBuilder();
 
   showQuestions = signal(false);
   isLoading = signal(false);
+  questionList = signal<IQuestion[]>([]);
+  form!: FormGroup;
 
-  showModal = signal(false);
-  modalMessage = signal('');
-  modalType = signal<'success' | 'error' | 'warning'>('warning');
+  trackById(index: number, item: IQuestion): number {
+  return item.id;
+}
 
   constructor(private router: Router, private auth: AuthService) {}
 
-  form: FormGroup = this.fb.group({
-    email: this.fb.control('', [Validators.required, Validators.email]),
-    token: this.fb.control('', [Validators.required, Validators.pattern(/^[0-9]+$/)]),
-    questions: this.fb.group({
-      answer1: this.fb.control('', [Validators.required]),
-      answer2: this.fb.control('', [Validators.required]),
-      answer3: this.fb.control('', [Validators.required]),
-    }),
-  });
 
-
-    openModal(message: string): void {
-    this.modalMessage.set(message);
-    this.showModal.set(true);
+  ngOnInit(): void {
+    this.form = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      token: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+      questions: this.fb.group({}),
+    });
   }
 
-  closeModal(): void {
-    const type = this.modalType()
-    this.showModal.set(false);
-     if (type === 'error' || type === 'warning') {
+  private pickRandom<T>(array: T[], count: number): T[] {
+    const copy = [...array];
+    for (let i = copy.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copy[i], copy[j]] = [copy[j], copy[i]];
     }
-
+    return copy.slice(0, count);
   }
-
-
-
 
   onSubmit(): void {
-
-
+    const { email, token } = this.form.value;
 
     this.isLoading.set(true);
-
-    const email = this.form.get('email')?.value ?? '';
-    const token = this.form.get('token')?.value ?? '';
-
-
     this.auth.validateToken(email, token).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         if (res.success) {
-            Swal.fire({
-              icon: 'success',
-              title: '¡Bienvenido!',
-              text: 'Respuestas correctas.',
-              confirmButtonColor: '#d47100ff',})
-              .then(() => {
-              this.router.navigate(['/dashboard'])
-              })
-        }else {
-          Swal.fire({
-            icon: 'error',
-            title: 'Token Incorrecto',
-            text: 'Responde las siguientes preguntas',
-            confirmButtonColor: '#d33',
-          });
-          this.showQuestions.set(true);
-        }
-      },
-
-    });
-  }
-
-  onQuestionsSubmit(): void {
-    const email = this.form.get('email')?.value ?? '';
-    const answers = this.form.get('questions')?.value as IQuestionAnswers;
-
-    if (!answers.answer1 || !answers.answer2 || !answers.answer3) {
-       Swal.fire({
-            icon: 'error',
-            title: 'Respuestas incorrectas',
-            text: 'Alguna respuesta no coincide.',
-            confirmButtonColor: '#d33',
-          });
-      return;
-    }
-
-    this.isLoading.set(true);
-
-    this.auth.validateQuestions(email, answers).subscribe({
-      next: (res) => {
-        this.isLoading.set(false);
-        if (res.success) {
-          Swal.fire({
-              icon: 'success',
-              title: '¡Bienvenido!',
-              text: 'Respuestas correctas.',
-              confirmButtonColor: '#d47100ff',})
-              .then(() => {
-              this.router.navigate(['/dashboard'])
-          })
+          Swal.fire('✅ Éxito', 'Token correcto, bienvenido.', 'success');
+          this.router.navigate(['/dashboard']);
         } else {
-            Swal.fire({
-            icon: 'error',
-            title: 'Respuestas incorrectas',
-            text: 'Alguna respuesta no coincide.',
-            confirmButtonColor: '#d33',
-          });
+          Swal.fire('❌ Token incorrecto', 'Responde las preguntas de seguridad', 'error');
+          this.showQuestions.set(true);
+          this.loadQuestions();
         }
       },
       error: () => {
         this.isLoading.set(false);
-          Swal.fire({
-          title: "TOKEN",
-          text: '⚠️ Error al validar el token.',
-          icon: "question"
-        });
+        Swal.fire('⚠️ Error', 'No se pudo validar el token.', 'warning');
       },
     });
   }
 
-  get questionsGroup() {
+  loadQuestions(): void {
+    this.auth.getQuestions().subscribe({
+      next: (all) => {
+        const selected = this.pickRandom(all, 3);
+        this.questionList.set(selected);
+
+        const controls: Record<string, any> = {};
+        selected.forEach((q) => (controls[q.id] = ['']));
+        const questionsGroup = this.fb.group(controls);
+        this.form.setControl('questions', questionsGroup);
+      },
+    });
+  }
+
+  onQuestionsSubmit(): void {
+    const email = this.form.get('email')?.value;
+    const answers = this.form.get('questions')?.value;
+
+    this.isLoading.set(true);
+    this.auth.validateQuestions(email, answers).subscribe({
+      next: (res) => {
+        this.isLoading.set(false);
+        if (res.success) {
+          Swal.fire('¡Correcto!', 'Respuestas válidas.', 'success').then(() => {
+            this.router.navigate(['/dashboard']);
+          });
+        } else {
+          Swal.fire('Error', 'Alguna respuesta es incorrecta.', 'error');
+        }
+      },
+      error: () => {
+        this.isLoading.set(false);
+        Swal.fire('Error', 'No se pudieron validar las respuestas.', 'error');
+      },
+    });
+  }
+    get questionsGroup() {
     return this.form.get('questions') as FormGroup;
   }
+
 }
