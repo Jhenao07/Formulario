@@ -30,13 +30,28 @@ export class AuthFormComponent {
   constructor(private router: Router, private auth: AuthService) {}
 
 
+
+
   ngOnInit(): void {
     this.form = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
-      token: ['', [Validators.required, Validators.pattern(/^\d{6}$/)]],
+       email: this.fb.control('', [
+        Validators.required,
+        Validators.email,
+        Validators.pattern(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/) // incluye arroba y dominio válido
+      ]),
+
+        password: this.fb.control('', [
+        Validators.required,
+        Validators.minLength(6),
+      ]),
+        token: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(/^\d{6}$/), // solo 6 números
+      ]),
       questions: this.fb.group({}),
     });
   }
+
 
   private pickRandom<T>(array: T[], count: number): T[] {
     const copy = [...array];
@@ -48,10 +63,18 @@ export class AuthFormComponent {
   }
 
   onSubmit(): void {
-    const { email, token } = this.form.value;
+  const email = this.form.get('email')?.value;
+  const password = this.form.get('password')?.value;
+  const token = this.form.get('token')?.value;
 
+    if (!this.form.valid) {
+    Swal.fire('Error', 'Por favor completa todos los campos correctamente.', 'warning');
+    return;
+  }
     this.isLoading.set(true);
-    this.auth.validateToken(email, token).subscribe({
+
+
+    this.auth.validateToken(email, password, token).subscribe({
       next: (res) => {
         this.isLoading.set(false);
         if (res.success) {
@@ -70,6 +93,8 @@ export class AuthFormComponent {
     });
   }
 
+
+
   loadQuestions(): void {
     this.auth.getQuestions().subscribe({
       next: (all) => {
@@ -85,27 +110,46 @@ export class AuthFormComponent {
   }
 
   onQuestionsSubmit(): void {
-    const email = this.form.get('email')?.value;
-    const answers = this.form.get('questions')?.value;
 
-    this.isLoading.set(true);
-    this.auth.validateQuestions(email, answers).subscribe({
-      next: (res) => {
-        this.isLoading.set(false);
-        if (res.success) {
-          Swal.fire('¡Correcto!', 'Respuestas válidas.', 'success').then(() => {
-            this.router.navigate(['/dashboard']);
-          });
-        } else {
-          Swal.fire('Error', 'Alguna respuesta es incorrecta.', 'error');
-        }
-      },
-      error: () => {
-        this.isLoading.set(false);
-        Swal.fire('Error', 'No se pudieron validar las respuestas.', 'error');
-      },
-    });
-  }
+  const email = this.form.get('email')?.value;
+ const answers: IQuestionAnswers = this.form.get('questions')?.value;
+
+
+  this.isLoading.set(true);
+  this.auth.validateQuestions( answers).subscribe({
+    next: (res) => {
+      this.isLoading.set(false);
+
+      if (res.success) {
+        Swal.fire({
+          title: '¡Correcto!',
+          text: 'Respuestas válidas.',
+          icon: 'success',
+          confirmButtonText: 'Continuar'
+        }).then(() => {
+          this.router.navigate(['/dashboard']);
+        });
+      } else {
+        Swal.fire({
+          title: 'Error',
+          text: 'Alguna respuesta es incorrecta.',
+          icon: 'error',
+          confirmButtonText: 'Intentar de nuevo'
+        });
+      }
+    },
+    error: () => {
+      this.isLoading.set(false);
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudieron validar las respuestas.',
+        icon: 'error',
+        confirmButtonText: 'Cerrar'
+      });
+    },
+  });
+}
+
     get questionsGroup() {
     return this.form.get('questions') as FormGroup;
   }

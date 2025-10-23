@@ -7,23 +7,27 @@ import { IQuestion, IQuestionAnswers } from '../interfaces/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private apiUrl = 'http://localhost:3000/api/auth';
+  private baseUrl = 'http://localhost:3000/api/auth';
 
   constructor(private http: HttpClient) {}
 
 
   getQuestions(): Observable<IQuestion[]> {
-    return this.http.get<IQuestion[]>(`${this.apiUrl}/questions`);
+    return this.http.get<IQuestion[]>(`${this.baseUrl}/questions`);
   }
 
-  validateToken(email: string, token: string): Observable<{ success: boolean }> {
-    return this.http.post<{ success: boolean }>(`${this.apiUrl}/validate-token`, {
+  validateToken(email: string, passwords: string, token: string): Observable<{ success: boolean }> {
+    return this.http.post<{ success: boolean }>(`${this.baseUrl}/validate-token`, {
       email,
+      passwords,
       token,
     });
   }
 
-  validateQuestions(email: string, answers: Record<number, string>): Observable<{ success: boolean }> {
-    return this.http.post<{ success: boolean }>(`${this.apiUrl}/validate-questions`, { email, answers });
+
+  validateQuestions(answers: IQuestionAnswers) {
+    return this.http.post<{ success: boolean }>(`${this.baseUrl}/validate-questions`, {
+      answers,
+    });
   }
 }
