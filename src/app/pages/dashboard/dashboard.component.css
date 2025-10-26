@@ -1,0 +1,112 @@
+/* 🌈 Fondo principal */
+.dashboard-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+    background: linear-gradient(135deg, #e0f7fa 0%, #d6d980 40%, #fad55c 100%);
+  background: linear-gradient(135deg, #e0f7fa 0%, #c2ba67 40%, #e28645 100%);
+  font-family: "Poppins", "Inter", sans-serif;
+  padding: 1rem;
+}
+
+/* 🧊 Tarjeta central */
+.dashboard-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.1);
+  padding: 3rem 2.5rem;
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* 👤 Encabezado */
+.dashboard-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.8rem;
+}
+
+.dashboard-logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 1rem;
+  animation: fadeInDown 0.8s ease;
+}
+
+/* 📝 Título */
+.dashboard-header h1 {
+  font-size: 1.9rem;
+  color: #e3800f;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  margin: 0;
+}
+
+/* 📖 Texto descriptivo */
+.dashboard-text {
+  color: #4b5563;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+/* 🔘 Botón */
+.logout-btn {
+  background: linear-gradient(135deg, #f44336, #bef130);
+  color: #fff;
+  border: none;
+  padding: 0.9rem 2.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 6px 15px rgba(244, 67, 54, 0.25);
+}
+
+.logout-btn:hover {
+  background: linear-gradient(135deg, #ef5350, #db941a);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(232, 168, 6, 0.35);
+}
+
+.logout-btn:active {
+  transform: scale(0.97);
+}
+
+/* ✨ Animaciones */
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📱 Responsivo */
+@media (max-width: 480px) {
+  .dashboard-card {
+    padding: 2rem 1.2rem;
+  }
+
+  .dashboard-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .dashboard-text {
+    font-size: 0.95rem;
+  }
+}

@@ -1,0 +1,20 @@
+  <div class="questions-container" *ngIf="questions().length">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <h1>Preguntas de Seguridad</h1>
+    <div
+      class="form-group"
+      *ngFor="let q of questions(); trackBy: trackById"
+    >
+      <label>{{ q.text }}</label>
+      <input
+        [formControlName]="q.id"
+        type="text"
+        placeholder="Tu respuesta..."
+      />
+    </div>
+    <div class="button-group">
+    <button type="submit" [disabled]="isLoading()">Enviar Respuestas</button>
+    <button type="button" (click)="goBack()">← Volver</button>
+    </div>
+  </form>
+</div>

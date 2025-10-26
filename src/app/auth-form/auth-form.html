@@ -1,54 +1,17 @@
 <div class="auth-container">
-
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" *ngIf="!showQuestions()">
-    <div class="form">
+  <form class="form" [formGroup]="form">
       <h1>🔐 Login </h1>
       <div class="form-group">
         <h1>Correo electrónico</h1>
-        <div class="error"  *ngIf="form.get('email')?.invalid && form.get('email')?.touched" >
-            <small *ngIf="form.get('email')?.hasError('required')">El correo es obligatorio.</small>
-            <small *ngIf="form.get('email')?.hasError('email')">Formato de correo inválido.</small>
-            <small *ngIf="form.get('email')?.hasError('pattern')">Debe incluir @ y dominio válido.</small>
-        </div>
         <input type="email" formControlName="email" placeholder=" usuario@dominio.com " />
       </div>
-      <div class="form-group">
-        <h1>Contraseña</h1>
-        <input formControlName="password" type="password" placeholder="Tu contraseña" />
-         <div *ngIf="form.get('password')?.invalid && form.get('password')?.touched" class="error">
-          <small *ngIf="form.get('password')?.hasError('required')">La contraseña es obligatoria.</small>
-          <small *ngIf="form.get('password')?.hasError('minlength')">Mínimo 6 caracteres.</small>
-        </div>
+
+      
+      <div class="button-group">
+        <button class="btn btn-primary" (click)="goToQuestions()">Ir a Preguntas</button>
+        <button class="btn btn-secondary" (click)="goToToken()">Ir a Token</button>
       </div>
-
-
-      <div class="form-group">
-        <h1>Token MFA</h1>
-      <input type="text" formControlName="token" maxlength="6" placeholder=" " />
-
-      <div class="error" *ngIf="form.get('token')?.invalid && form.get('token')?.touched">
-      El token solo debe contener números
-      </div>
-      </div>
-
-      <button type="submit" [disabled]="isLoading()">
-      {{ isLoading() ? 'Validando...' : 'Validar token' }}
-      </button>
-    </div>
-  </form>
-
-
-    <div class="form" *ngIf="showQuestions()" [formGroup]="questionsGroup">
-     <form action="form">
-      <h3>Preguntas de seguridad</h3>
-
-      <div class="form-group" *ngFor="let q of questionList(); trackBy: trackById">
-        <label>{{ q.text }}</label>
-        <input [formControlName]="q.id" placeholder="Tu respuesta..." />
-      </div>
-      <button type="button" (click)="onQuestionsSubmit()">Enviar Respuestas</button>
-      </form>
-    </div>
+    </form>
 
 </div>
+

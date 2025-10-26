@@ -4,7 +4,8 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 @Component({
   selector: 'app-dashboard',
   imports: [],
-  templateUrl: "./dashboard.html"
+  templateUrl: "./dashboard.html",
+  styleUrl: './dashboard.component.css',
 
 })
 export class DashboardComponent {

@@ -1,12 +1,15 @@
+@import "tailwindcss";
+
 :host {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-image: url('../../assets/imagen.png');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  align-items: flex-start; /* Para que el contenido pueda crecer hacia abajo */
+  min-height: 100vh; /* En lugar de height fijo */
+  width: 100%;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), /* Capa oscura para contraste */
+    url('../../assets/imagen.png') no-repeat center center / cover;
+  background-attachment: fixed; /* Hace que el fondo se mantenga fijo al hacer scroll */
+  padding: 60px 20px; /* Espaciado superior e inferior */
+  box-sizing: border-box;
 }
-
-

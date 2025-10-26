@@ -6,3 +6,6 @@ export interface IQuestion {
 export interface IQuestionAnswers {
  [id: string]: string;
 }
+export interface ITokenResponse {
+  success: boolean;
+}

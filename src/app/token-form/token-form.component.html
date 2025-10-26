@@ -1,0 +1,20 @@
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-group">
+       <h1>Validación por Token</h1>
+      <h1 for="token">Ingrese su token:</h1>
+      <input
+        id="token"
+        type="text"
+        formControlName="token"
+        class="form-control"
+        placeholder="Ej: 11111"
+      />
+      <div class="button-group">
+      <button type="button" (click)="goBack()">← Volver</button>
+      <button type="submit" [disabled]="form.invalid" class="btn btn-primary">
+        Validar Token
+      </button>
+      </div>
+    </div>
+  </form>

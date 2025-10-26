@@ -1,9 +1,8 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { IQuestion, IQuestionAnswers } from '../interfaces/interfaces';
-// import { IQuestionAnswers } from '../interfaces/interfaces';
+import { map, Observable } from 'rxjs';
+import { IQuestion, IQuestionAnswers, ITokenResponse } from '../interfaces/interfaces';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -11,17 +10,14 @@ export class AuthService {
 
   constructor(private http: HttpClient) {}
 
+     getRandomQuestions(): Observable<IQuestion[]> {
+      return this.http.get<IQuestion[]>(`${this.baseUrl}/questions`).pipe(
+      map((questions) => this.shuffleArray(questions).slice(0, 3))
+    );
+  }
 
   getQuestions(): Observable<IQuestion[]> {
     return this.http.get<IQuestion[]>(`${this.baseUrl}/questions`);
-  }
-
-  validateToken(email: string, passwords: string, token: string): Observable<{ success: boolean }> {
-    return this.http.post<{ success: boolean }>(`${this.baseUrl}/validate-token`, {
-      email,
-      passwords,
-      token,
-    });
   }
 
 
@@ -30,4 +26,21 @@ export class AuthService {
       answers,
     });
   }
+
+  
+  validateToken(email: string, token: string): Observable<ITokenResponse> {
+    return this.http.post<ITokenResponse>(`${this.baseUrl}/validate-token`, {
+      email,
+      token,
+    });
+  }
+
+
+   private shuffleArray(array: IQuestion[]): IQuestion[] {
+    return array
+      .map((item) => ({ item, sort: Math.random() }))
+      .sort((a, b) => a.sort - b.sort)
+      .map(({ item }) => item);
+  }
+
 }

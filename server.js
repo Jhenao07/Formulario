@@ -24,10 +24,9 @@ const questions = [
 
 // 🔹 Validar token
 app.post('/api/auth/validate-token', (req, res) => {
-  const { email, password, token } = req.body;
+  const { token } = req.body;
   res.json({ success: token === validToken });
-
-   if (email === 'tecnologia@nuvantglobal.com' && password === 'Prueba111' && token === '123456') {
+   if (token === '123456') {
     res.json({ success: true });
   } else {
     res.json({ success: false });
@@ -45,7 +44,7 @@ app.post('/api/auth/validate-questions', (req, res) => {
   let allCorrect = true;
 
   for (const id in answers) {
-    const question = questions.find(q => q.id === Number(id)); 
+    const question = questions.find(q => q.id === Number(id));
     if (!question || !question.answer) {
       allCorrect = false;
       break;
@@ -59,5 +58,6 @@ app.post('/api/auth/validate-questions', (req, res) => {
 
   res.json({ success: allCorrect });
 });
+
 
 app.listen(3000, () => console.log('✅ Backend corriendo en http://localhost:3000'));
