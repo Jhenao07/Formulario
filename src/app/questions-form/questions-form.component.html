@@ -5,7 +5,12 @@
     <label>Pregunta 1</label>
     <select formControlName="question1">
       <option value="" disabled selected>Seleccione una pregunta</option>
-      <option *ngFor="let q of questionsList" [value]="q.id">{{ q.text }}</option>
+      <option
+        *ngFor="let q of getFilteredQuestions([form.value.question2, form.value.question3])"
+        [value]="q.id"
+      >
+        {{ q.text }}
+      </option>
     </select>
     <input type="text" formControlName="answer1" placeholder="Tu respuesta..." />
   </div>
@@ -14,7 +19,12 @@
     <label>Pregunta 2</label>
     <select formControlName="question2">
       <option value="" disabled selected>Seleccione una pregunta</option>
-      <option *ngFor="let q of questionsList" [value]="q.id">{{ q.text }}</option>
+      <option
+        *ngFor="let q of getFilteredQuestions([form.value.question1, form.value.question3])"
+        [value]="q.id"
+      >
+        {{ q.text }}
+      </option>
     </select>
     <input type="text" formControlName="answer2" placeholder="Tu respuesta..." />
   </div>
@@ -23,13 +33,18 @@
     <label>Pregunta 3</label>
     <select formControlName="question3">
       <option value="" disabled selected>Seleccione una pregunta</option>
-      <option *ngFor="let q of questionsList" [value]="q.id">{{ q.text }}</option>
+      <option
+        *ngFor="let q of getFilteredQuestions([form.value.question1, form.value.question2])"
+        [value]="q.id"
+      >
+        {{ q.text }}
+      </option>
     </select>
     <input type="text" formControlName="answer3" placeholder="Tu respuesta..." />
   </div>
 
   <div class="button-group">
     <button type="button" (click)="goBack()">Volver</button>
-    <button type="submit">Enviar</button>
+    <button type="submit" [disabled]="isLoading()">Enviar</button>
   </div>
 </form>

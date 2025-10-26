@@ -3,54 +3,51 @@
 :host {
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Para que el contenido pueda crecer hacia abajo */
-  min-height: 100vh; /* En lugar de height fijo */
+  align-items: flex-start;
+  min-height: 100vh;
   width: 100%;
   background:
-    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), /* Capa oscura para contraste */
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
     url('../../assets/imagen.png') no-repeat center center / cover;
-  background-attachment: fixed; /* Hace que el fondo se mantenga fijo al hacer scroll */
-  padding: 60px 20px; /* Espaciado superior e inferior */
+  background-attachment: fixed;
+  padding: 60px 20px;
   box-sizing: border-box;
 }
 
 form {
   width: 100%;
-  max-width: 480px;
-  background: rgba(255, 255, 255, 0.15);
+  max-width: 450px;
+  margin: 0 auto;
+  background: rgba(233, 153, 74, 0.08);
   backdrop-filter: blur(12px);
   border-radius: 20px;
-  padding: 40px 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  animation: fadeIn 0.6s ease;
+  padding: 30px 20px 50px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
   color: #fff;
+  animation: fadeIn 0.6s ease;
 }
 
-/* Título principal */
 h1 {
   text-align: center;
   font-size: 1.8rem;
-  font-weight: 600;
+  font-weight: 500;
   color: #fff;
-  margin-bottom: 30px;
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.4);
+  margin-bottom: 25px;
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 }
 
-/* Agrupación de preguntas */
-.question-group {
+.form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 30px; /* separación amplia */
+  margin-bottom: 32px; 
 }
 
-/* Etiquetas */
 label {
   font-size: 1.1rem;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: #f0f0f0;
 }
 
-/* Inputs y Selects */
 select,
 input {
   padding: 12px 14px;
@@ -61,34 +58,30 @@ input {
   color: #fff;
   font-size: 1rem;
   transition: all 0.2s ease;
-  margin-bottom: 20px; /* separación clara entre select e input */
+  margin-bottom: 12px;
 }
 
 select option {
-  background-color: #333;
-  color: #fff;
+  color: #000;
 }
 
 input::placeholder {
   color: rgba(255, 255, 255, 0.6);
 }
 
-select:focus,
-input:focus {
+input:focus,
+select:focus {
   background-color: rgba(255, 255, 255, 0.25);
   box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
 }
 
-/* Botones */
 .button-group {
   display: flex;
   justify-content: space-between;
   margin-top: 40px;
-  gap: 10px;
 }
 
 button {
-  flex: 1;
   padding: 12px 20px;
   border-radius: 10px;
   border: none;
@@ -98,25 +91,24 @@ button {
   transition: all 0.3s ease;
 }
 
-button[type="submit"] {
+button[type='submit'] {
   background-color: #e7a80a;
   color: white;
 }
 
-button[type="submit"]:hover {
+button[type='submit']:hover {
   background-color: #c06223;
 }
 
-button[type="button"] {
+button[type='button'] {
   background-color: rgba(255, 255, 255, 0.15);
   color: white;
 }
 
-button[type="button"]:hover {
+button[type='button']:hover {
   background-color: rgba(255, 255, 255, 0.25);
 }
 
-/* Animación */
 @keyframes fadeIn {
   from {
     opacity: 0;

@@ -34,9 +34,6 @@ export class AuthFormComponent {
 
   constructor(private router: Router, private auth: AuthService) {}
 
-
-
-
   ngOnInit(): void {
     this.form = this.fb.group({
        email: this.fb.control('', [

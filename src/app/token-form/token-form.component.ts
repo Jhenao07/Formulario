@@ -23,6 +23,16 @@ export class TokenForm {
 
   constructor(private router: Router, private auth: AuthService) {}
 
+    ngOnInit(): void {
+    this.form = this.fb.group({
+        token: this.fb.control('', [
+        Validators.required,
+        Validators.pattern(/^\d{6}$/),
+      ]),
+    });
+
+  }
+
   onSubmit(): void {
     const token = this.form.value.token;
     if (!token) {
@@ -38,7 +48,7 @@ export class TokenForm {
           });
         } else {
           Swal.fire('❌ Token incorrecto', 'Intenta de nuevo.', 'error').then(() => {
-            this.router.navigate(['/auth']); // 🔁 Vuelve al login principal
+            this.router.navigate(['/auth']);
           });
         }
       },
@@ -46,18 +56,6 @@ export class TokenForm {
     });
   }
 
-
-
-
-  ngOnInit(): void {
-    this.form = this.fb.group({
-        token: this.fb.control('', [
-        Validators.required,
-        Validators.pattern(/^\d{6}$/), // solo 6 números
-      ]),
-    });
-
-  }
 
   goBack() {
     this.router.navigate(['/auth']);

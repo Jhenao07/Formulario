@@ -5,11 +5,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import Swal from 'sweetalert2';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 
 @Component({
   selector: 'app-questions-form',
   templateUrl: './questions-form.component.html',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, HttpClientModule],
   styleUrls: ['./questions-form.component.css']
 })
 export class QuestionsFormComponent {
@@ -30,32 +31,23 @@ export class QuestionsFormComponent {
   return item.id;
   }
 
-  constructor(private router: Router, private auth: AuthService, private route: ActivatedRoute,
+  constructor(private router: Router, private http: HttpClient, private auth: AuthService, private route: ActivatedRoute,
 ) {}
 
   ngOnInit(): void {
-     this.loadQuestions();
-      this.form = this.fb.group({
-      question1: [''],
-      answer1: [''],
-      question2: [''],
-      answer2: [''],
-      question3: [''],
-      answer3: [''],
-      });
-    }
+    this.loadQuestions();
+  }
 
-  loadQuestions(): void {
+  loadQuestions() {
     this.auth.getQuestions().subscribe({
-      next: (data) => {
-        this.questionsList = data;
+      next: (res) => {
+        this.questionsList = res;
+        this.availableQuestions = [...this.questionsList];
         this.buildForm();
+        this.handleQuestionChanges();
       },
-      error: (err) => console.error('Error al cargar preguntas', err),
+      error: (err) => console.error('Error cargando preguntas:', err),
     });
-
-
-
   }
 
   buildForm() {
@@ -69,6 +61,28 @@ export class QuestionsFormComponent {
     });
   }
 
+  watchQuestionChanges() {
+    this.form.valueChanges.subscribe(() => {
+    });
+  }
+
+  getFilteredQuestions(excludeIds: (string | number)[]) {
+    return this.questionsList.filter((q) => !excludeIds.includes(q.id));
+  }
+
+  handleQuestionChanges() {
+    this.form.valueChanges.subscribe(() => {
+      const selectedIds = [
+        this.form.value.question1,
+        this.form.value.question2,
+        this.form.value.question3,
+      ].filter(Boolean);
+
+      this.availableQuestions = this.questionsList.filter(
+        (q) => !selectedIds.includes(q.id)
+      );
+    });
+  }
    onSubmit() {
     if (this.form.invalid) {
       Swal.fire('⚠️', 'Responde las tres preguntas', 'warning');
@@ -76,17 +90,22 @@ export class QuestionsFormComponent {
     }
 
     const selectedQuestions = [
-      this.questionsList.find(q => q.id === Number(this.form.value.question1)),
-      this.questionsList.find(q => q.id === Number(this.form.value.question2)),
-      this.questionsList.find(q => q.id === Number(this.form.value.question3))
+      { id: this.form.value.question1 },
+      { id: this.form.value.question2 },
+      { id: this.form.value.question3 },
     ].filter(Boolean) as IQuestion[];
 
     const answers = [
-      this.form.value.answer1.trim(),
-      this.form.value.answer2.trim(),
-      this.form.value.answer3.trim()
+      this.form.value.answer1,
+      this.form.value.answer2,
+      this.form.value.answer3
     ];
 
+     const ids = selectedQuestions.map((q) => q.id);
+    if (new Set(ids).size !== ids.length) {
+      Swal.fire('⚠️', 'No puedes elegir la misma pregunta más de una vez', 'error');
+      return;
+    }
     this.isLoading.set(true);
 
     this.auth.validateQuestions(selectedQuestions, answers).subscribe({

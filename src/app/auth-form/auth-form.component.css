@@ -3,13 +3,13 @@
 :host {
   display: flex;
   justify-content: center;
-  align-items: flex-start; /* Para que el contenido pueda crecer hacia abajo */
-  min-height: 100vh; /* En lugar de height fijo */
+  align-items: flex-start;
+  min-height: 100vh;
   width: 100%;
   background:
-    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), /* Capa oscura para contraste */
+    linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)),
     url('../../assets/imagen.png') no-repeat center center / cover;
-  background-attachment: fixed; /* Hace que el fondo se mantenga fijo al hacer scroll */
-  padding: 60px 20px; /* Espaciado superior e inferior */
+  background-attachment: fixed;
+  padding: 60px 20px; 
   box-sizing: border-box;
 }
