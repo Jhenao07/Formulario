@@ -1,20 +1,35 @@
-  <div class="questions-container" *ngIf="questions().length">
-  <form [formGroup]="form" (ngSubmit)="onSubmit()">
-      <h1>Preguntas de Seguridad</h1>
-    <div
-      class="form-group"
-      *ngFor="let q of questions(); trackBy: trackById"
-    >
-      <label>{{ q.text }}</label>
-      <input
-        [formControlName]="q.id"
-        type="text"
-        placeholder="Tu respuesta..."
-      />
-    </div>
-    <div class="button-group">
-    <button type="submit" [disabled]="isLoading()">Enviar Respuestas</button>
-    <button type="button" (click)="goBack()">← Volver</button>
-    </div>
-  </form>
-</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h1>Preguntas de seguridad</h1>
+
+  <div class="form-group">
+    <label>Pregunta 1</label>
+    <select formControlName="question1">
+      <option value="" disabled selected>Seleccione una pregunta</option>
+      <option *ngFor="let q of questionsList" [value]="q.id">{{ q.text }}</option>
+    </select>
+    <input type="text" formControlName="answer1" placeholder="Tu respuesta..." />
+  </div>
+
+  <div class="form-group">
+    <label>Pregunta 2</label>
+    <select formControlName="question2">
+      <option value="" disabled selected>Seleccione una pregunta</option>
+      <option *ngFor="let q of questionsList" [value]="q.id">{{ q.text }}</option>
+    </select>
+    <input type="text" formControlName="answer2" placeholder="Tu respuesta..." />
+  </div>
+
+  <div class="form-group">
+    <label>Pregunta 3</label>
+    <select formControlName="question3">
+      <option value="" disabled selected>Seleccione una pregunta</option>
+      <option *ngFor="let q of questionsList" [value]="q.id">{{ q.text }}</option>
+    </select>
+    <input type="text" formControlName="answer3" placeholder="Tu respuesta..." />
+  </div>
+
+  <div class="button-group">
+    <button type="button" (click)="goBack()">Volver</button>
+    <button type="submit">Enviar</button>
+  </div>
+</form>

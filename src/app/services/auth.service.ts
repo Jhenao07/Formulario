@@ -16,18 +16,17 @@ export class AuthService {
     );
   }
 
-  getQuestions(): Observable<IQuestion[]> {
-    return this.http.get<IQuestion[]>(`${this.baseUrl}/questions`);
+  getQuestions(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}/questions`);
   }
 
+ validateQuestions(selectedQuestions: IQuestion[], answers: string[]) {
+  return this.http.post<{ success: boolean }>(
+    'http://localhost:3000/api/auth/validate-questions',
+    { selectedQuestions, answers }
+  );
+}
 
-  validateQuestions(answers: IQuestionAnswers) {
-    return this.http.post<{ success: boolean }>(`${this.baseUrl}/validate-questions`, {
-      answers,
-    });
-  }
-
-  
   validateToken(email: string, token: string): Observable<ITokenResponse> {
     return this.http.post<ITokenResponse>(`${this.baseUrl}/validate-token`, {
       email,
